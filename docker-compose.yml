@@ -1,0 +1,45 @@
+# INTRUCCIONES PARA VER LOS DATOS en el container Postgress :)
+
+# docker exec -it db psql -U postgres
+# \c guille_db
+# select * from profesores;
+
+# Para salir de pgres: \q
+
+# Si la api se levanta antes que la BBDD, desde docker Desktop se podria deterner el container api hasta que se encienda bien la BBDD
+
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    container_name: db
+    environment:
+      POSTGRES_DB: guille_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mired
+
+  api:
+    image: matope1/api_guille  #Imagen en DockerHub
+    container_name: api
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:1234@db:5432/guille_db
+    networks:
+      - mired
+
+volumes:
+  postgres_data:
+
+networks:
+  mired:
+    driver: bridge
