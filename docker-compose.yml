@@ -1,4 +1,5 @@
 # INTRUCCIONES PARA VER LOS DATOS en el container Postgress :)
+# Despues de haber añadido profesores desde Swagger de FastAPI 
 
 # docker exec -it db psql -U postgres
 # \c guille_db
@@ -6,7 +7,6 @@
 
 # Para salir de pgres: \q
 
-# Si la api se levanta antes que la BBDD, desde docker Desktop se podria deterner el container api hasta que se encienda bien la BBDD
 
 
 services:
@@ -36,6 +36,8 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:1234@db:5432/guille_db
     networks:
       - mired
+    command: sh -c "sleep 5 && uvicorn main:app --host 0.0.0.0 --port 8000" # Espera 5seg para que se levante antes la BBDD
+
 
 volumes:
   postgres_data:
